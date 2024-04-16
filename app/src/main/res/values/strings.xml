@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">FourierGraph</string>
-    <string name="name_toolbar">Graficadora de Series de Fourier</string>
+    <string name="name_toolbar">Graficador de Series de Fourier</string>
 </resources>
