@@ -1,4 +1,19 @@
 <resources>
     <string name="app_name">FourierGraph</string>
     <string name="name_toolbar">Graficadora de Series de Fourier</string>
+    <string name="btnGraficar">Generar Grafica</string>
+
+    <string-array name="opciones_spinner">
+        <item></item>
+        <item>Onda sinusoidal</item>
+        <item>Onda coseno</item>
+        <item>Onda cuadrada</item>
+        <item>Onda rectangular</item>
+        <item>Forma de onda triangular</item>
+        <item>Forma de onda de diente de sierra</item>
+        <item>Forma de onda de pulso o tren de pulso</item>
+    </string-array>
+    <string name="hint_spinner">Seleccione Señal Periodica</string>
+    <string name="hint_onda">Frecuencia de la onda</string>
+    <string name="hint_armonico">Frecuencia de Armonicos</string>
 </resources>
