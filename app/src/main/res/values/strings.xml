@@ -16,4 +16,5 @@
     <string name="hint_spinner">Seleccione Señal Periodica</string>
     <string name="hint_onda">Frecuencia de la onda</string>
     <string name="hint_armonico">Frecuencia de Armonicos</string>
+    <string name="default_spinner_message">Selecciona una opción...</string>
 </resources>

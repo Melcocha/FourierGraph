@@ -55,7 +55,10 @@
         app:layout_constraintTop_toBottomOf="@id/text_spinner"
         android:layout_marginTop="10dp"
         android:background="@drawable/rounded_spinner_background"
-        tools:ignore="MissingConstraints" />
+        tools:ignore="MissingConstraints"
+        >
+
+    </Spinner>
 
     <EditText
         android:id="@+id/editTextOnda"
@@ -92,7 +95,7 @@
         tools:ignore="MissingConstraints" />
 
     <Button
-        android:id="@+id/buttonIrACobrar"
+        android:id="@+id/buttonGraficar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
@@ -102,6 +105,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:text="@string/btnGraficar"
-        android:onClick="irAGraficador"/>
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
