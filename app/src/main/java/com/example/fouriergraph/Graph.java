@@ -8,6 +8,7 @@ import java.lang.Math;
 import java.util.ArrayList;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -45,73 +46,60 @@ public class Graph extends AppCompatActivity {
 
                 switch (selectedOption) {
                     case "Onda sinusoidal":
-                        ArrayList<double[]> puntosSen = generarOndaSinusoidal(ondaDouble);
-                        ArrayList<double[]> puntosSenTransformada = generarOndaSinusoidalTransformada(ondaDouble, armonicoDouble);
+                        ArrayList<double[]> puntosSen = generarOndaSinusoidalRectificada(ondaDouble);
+                        ArrayList<double[]> puntosSenTransformada = generarOndaSenoRectificadaFourier(ondaDouble, armonicoDouble);
 
-
+                        Log.i("Onda sinusoidal", "Valores de la onda sinusoidal rectificada:");
                         for (double[] punto : puntosSen) {
-                            System.out.println("Puntos de la onda sinusoidal original: Tiempo = " + punto[0] + ", Valor = " + punto[1]);
+                            Log.i("Onda sinusoidal", "Tiempo: " + punto[0] + ", Valor: " + punto[1]);
                         }
 
+                        Log.i("Onda sinusoidal", "Valores de la transformada de Fourier de la onda sinusoidal rectificada:");
                         for (double[] punto : puntosSenTransformada) {
-                            System.out.println("Puntos de la serie de Fourier para la onda sinusoidal: Tiempo = " + punto[0] + ", Valor = " + punto[1]);
+                            Log.i("Onda sinusoidal", "Tiempo: " + punto[0] + ", Valor: " + punto[1]);
                         }
-
                         break;
 
 
+
                     case "Onda coseno":
-                        ArrayList<double[]> puntosCos = generarOndaCoseno(ondaDouble);
-                        ArrayList<double[]> puntosCosTransformada = generarOndaCosTransformada(ondaDouble, armonicoDouble);
+                        ArrayList<double[]> puntosCos = generarOndaCosenoidalRectificada(ondaDouble);
+                        ArrayList<double[]> puntosCosTransformada = generarOndaCosenoFourier(ondaDouble, armonicoDouble);
 
 
-                        for (double[] punto : puntosCos) {
-                            System.out.println("Puntos de la onda sinusoidal original: Tiempo = " + punto[0] + ", Valor = " + punto[1]);
-                        }
-
-                        for (double[] punto : puntosCosTransformada) {
-                            System.out.println("Puntos de la serie de Fourier para la onda sinusoidal: Tiempo = " + punto[0] + ", Valor = " + punto[1]);
-                        }
                         break;
 
                     case "Onda cuadrada":
                         ArrayList<double[]> puntosCuadrado = generarOndaCuadrada(ondaDouble);
+                        ArrayList<double[]> puntosCuadradoFourier = generarOndaCuadradaFourier(ondaDouble, armonicoDouble);
+
 
                         break;
 
                     case "Onda rectangular":
                         ArrayList<double[]> puntosRectangular = generarOndaRectangular(ondaDouble);
+                        ArrayList<double[]> puntosRectangularFourier = generarOndaRectangularFourier(ondaDouble, armonicoDouble);
 
                         break;
 
                     case "Forma de onda triangular":
                         ArrayList<double[]> puntosTriangular = generarOndaTriangular(ondaDouble);
                         ArrayList<double[]> puntosTriangularFourier = generarOndaTriangularFourier(ondaDouble, armonicoDouble);
-                        for (double[] punto : puntosTriangular) {
-                            System.out.println("Puntos de la onda Triangular original: Tiempo = " + punto[0] + ", Valor = " + punto[1]);
-                        }
 
-                        for (double[] punto : puntosTriangularFourier) {
-                            System.out.println("Puntos de la serie de Fourier para la onda triangular: Tiempo = " + punto[0] + ", Valor = " + punto[1]);
-                        }
 
                         break;
 
                     case "Forma de onda de diente de sierra":
                         ArrayList<double[]> puntosSierra = generarOndaDienteSierra(ondaDouble);
-                        ArrayList<double[]> puntosSierraFourier = generarOndaDienteSierraFourier(ondaDouble,armonicoDouble);
-                        for (double[] punto : puntosSierra) {
-                            System.out.println("Puntos de la onda sierra original: Tiempo = " + punto[0] + ", Valor = " + punto[1]);
-                        }
+                        ArrayList<double[]> puntosSierraFourier = generarOndaDienteSierraFourier(ondaDouble, armonicoDouble);
 
-                        for (double[] punto : puntosSierraFourier) {
-                            System.out.println("Puntos Sierra Fourier: Tiempo = " + punto[0] + ", Valor = " + punto[1]);
-                        }
                         break;
 
 
                     case "Forma de onda de pulso o tren de pulso":
                         ArrayList<double[]> puntosTrenPulso = generarOndaTrenPulsos(ondaDouble);
+                        ArrayList<double[]> puntosTrenPulsoFourier = generarOndaTrenPulsosFourier(ondaDouble, armonicoDouble);
+
 
                         break;
 
@@ -132,7 +120,8 @@ public class Graph extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private ArrayList<double[]> generarOndaSinusoidal(double periodo) {
+
+    private ArrayList<double[]> generarOndaSinusoidalRectificada(double periodo) {
         double tiempoInicial = 0.0;
         double tiempoFinal = periodo;
         int numPuntos = 1000;
@@ -141,38 +130,59 @@ public class Graph extends AppCompatActivity {
         ArrayList<double[]> puntos = new ArrayList<>();
 
         for (double tiempo = tiempoInicial; tiempo <= 2 * tiempoFinal; tiempo += pasoTiempo) {
-            double valor = Math.sin((2 * Math.PI * tiempo) / periodo);
+            double valor = Math.abs(Math.sin((2 * Math.PI * tiempo) / periodo)); // Tomar el valor absoluto
             double[] punto = {tiempo, valor};
             puntos.add(punto);
         }
         return puntos;
     }
-    private ArrayList<double[]> generarOndaSinusoidalTransformada(double periodo,double numArm) {
-        double tiempoInicial = 0.0;
-        double tiempoFinal = 2 * periodo;
+
+
+    private ArrayList<double[]> generarOndaSenoRectificadaFourier(double periodo, double armonico) {
         int numPuntos = 1000;
-        double pasoTiempo = (2 * tiempoFinal - tiempoInicial) / numPuntos;
+        double pasoTiempo = (2 * periodo) / numPuntos;
 
         ArrayList<double[]> puntos = new ArrayList<>();
 
         double[] tiempo = new double[numPuntos + 1];
-        double[] ondaSinusoidal = new double[numPuntos + 1];
         for (int i = 0; i <= numPuntos; i++) {
-            tiempo[i] = tiempoInicial + i * pasoTiempo;
-            ondaSinusoidal[i] = Math.sin(2 * Math.PI * tiempo[i] / periodo);
+            tiempo[i] = i * pasoTiempo;
         }
 
-        double[] serieFourier = new double[numPuntos + 1];
-        for (int i = 0; i <= numPuntos; i++) {
-            double tiempoNormalizado = tiempo[i] % periodo;
-            for (int n = 1; n <= numArm; n++) {
-                serieFourier[i] += (4 / Math.PI) * (1.0 / n) * Math.sin(2 * Math.PI * (2 * n - 1) * tiempoNormalizado / periodo);
+        double[] original_wave = new double[numPuntos];
+        for (int i = 0; i < numPuntos; i++) {
+            double x = i * pasoTiempo;
+            if (x % periodo <= periodo / 2) {
+                original_wave[i] = Math.sin((2 * Math.PI * x) / periodo); // Seno rectificado
+            } else {
+                original_wave[i] = 0; // Valor cero para la segunda mitad del periodo
             }
         }
 
-        for (int i = 0; i <= numPuntos; i++) {
-            double[] punto = {tiempo[i], serieFourier[i]};
-            puntos.add(punto);
+        double[] fourier_series = new double[numPuntos];
+        double paso = (2 * periodo) / (numPuntos - 1);
+        for (int i = 0; i < numPuntos; i++) {
+            double x = i * paso;
+            double suma = 0;
+            for (int n = 1; n <= armonico; n++) {
+                double an = 0;
+                double bn = 0;
+                for (int k = 0; k < numPuntos; k++) {
+                    double t = k * paso;
+                    if (n % 2 != 0) {
+                        an += original_wave[k] * Math.cos((2 * Math.PI * n * t) / periodo) * paso;
+                    }
+                    bn += original_wave[k] * Math.sin((2 * Math.PI * n * t) / periodo) * paso;
+                }
+                suma += an * Math.cos((2 * Math.PI * n * x) / periodo) + bn * Math.sin((2 * Math.PI * n * x) / periodo);
+            }
+            fourier_series[i] = suma / armonico; // Normalización
+        }
+
+        // Agregar puntos de la serie de Fourier a la lista
+        for (int i = 0; i < numPuntos; i++) {
+            double[] puntoFourier = {tiempo[i], fourier_series[i]*2};
+            puntos.add(puntoFourier);
         }
 
         return puntos;
@@ -180,55 +190,75 @@ public class Graph extends AppCompatActivity {
 
 
 
-    private ArrayList<double[]> generarOndaCoseno(double periodo) {
+
+
+    private ArrayList<double[]> generarOndaCosenoidalRectificada(double periodo) {
         double tiempoInicial = 0.0;
         double tiempoFinal = periodo;
-        int numPuntos = 100;
-        double pasoTiempo = (2 * tiempoFinal - tiempoInicial) / numPuntos;
-
-
-        ArrayList<double[]> puntos = new ArrayList<>();
-
-
-        for (double tiempo = tiempoInicial; tiempo <= 2 * tiempoFinal; tiempo += pasoTiempo) {
-            double valor = Math.cos((2 * Math.PI * tiempo) / periodo);
-            double[] punto = {tiempo, valor};
-            puntos.add(punto);
-        }
-
-
-        return puntos;
-    }
-    private ArrayList<double[]> generarOndaCosTransformada(double periodo,double numArm) {
-        double tiempoInicial = 0.0;
-        double tiempoFinal = 2 * periodo;
         int numPuntos = 1000;
         double pasoTiempo = (2 * tiempoFinal - tiempoInicial) / numPuntos;
 
         ArrayList<double[]> puntos = new ArrayList<>();
 
+        for (double tiempo = tiempoInicial; tiempo <= 2 * tiempoFinal; tiempo += pasoTiempo) {
+            double valor = Math.abs(Math.cos((2 * Math.PI * tiempo) / periodo)); // Tomar el valor absoluto
+            double[] punto = {tiempo, valor};
+            puntos.add(punto);
+        }
+        return puntos;
+    }
+
+
+    private ArrayList<double[]> generarOndaCosenoFourier(double periodo, double armonico) {
+        int numPuntos = 1000;
+        double pasoTiempo = (2 * periodo) / numPuntos;
+
+        ArrayList<double[]> puntos = new ArrayList<>();
+
         double[] tiempo = new double[numPuntos + 1];
-        double[] ondaSinusoidal = new double[numPuntos + 1];
         for (int i = 0; i <= numPuntos; i++) {
-            tiempo[i] = tiempoInicial + i * pasoTiempo;
-            ondaSinusoidal[i] = Math.cos(2 * Math.PI * tiempo[i] / periodo);
+            tiempo[i] = i * pasoTiempo;
         }
 
-        double[] serieFourier = new double[numPuntos + 1];
-        for (int i = 0; i <= numPuntos; i++) {
-            double tiempoNormalizado = tiempo[i] % periodo;
-            for (int n = 1; n <= numArm; n++) {
-                serieFourier[i] += (4 / Math.PI) * (1.0 / n) * Math.cos(2 * Math.PI * (2 * n - 1) * tiempoNormalizado / periodo);
+        double[] original_wave = new double[numPuntos];
+        for (int i = 0; i < numPuntos; i++) {
+            double x = i * pasoTiempo;
+            if (x % periodo <= periodo / 2) {
+                original_wave[i] = Math.cos((2 * Math.PI * x) / periodo); // Seno rectificado
+            } else {
+                original_wave[i] = 0; // Valor cero para la segunda mitad del periodo
             }
         }
 
-        for (int i = 0; i <= numPuntos; i++) {
-            double[] punto = {tiempo[i], serieFourier[i]};
-            puntos.add(punto);
+        double[] fourier_series = new double[numPuntos];
+        double paso = (2 * periodo) / (numPuntos - 1);
+        for (int i = 0; i < numPuntos; i++) {
+            double x = i * paso;
+            double suma = 0;
+            for (int n = 1; n <= armonico; n++) {
+                double an = 0;
+                double bn = 0;
+                for (int k = 0; k < numPuntos; k++) {
+                    double t = k * paso;
+                    if (n % 2 != 0) {
+                        an += original_wave[k] * Math.cos((2 * Math.PI * n * t) / periodo) * paso;
+                    }
+                    bn += original_wave[k] * Math.sin((2 * Math.PI * n * t) / periodo) * paso;
+                }
+                suma += an * Math.cos((2 * Math.PI * n * x) / periodo) + bn * Math.sin((2 * Math.PI * n * x) / periodo);
+            }
+            fourier_series[i] = suma / armonico; // Normalización
+        }
+
+        // Agregar puntos de la serie de Fourier a la lista
+        for (int i = 0; i < numPuntos; i++) {
+            double[] puntoFourier = {tiempo[i], fourier_series[i]*2};
+            puntos.add(puntoFourier);
         }
 
         return puntos;
     }
+
 
     private ArrayList<double[]> generarOndaDienteSierra(double periodo) {
         double tiempoInicial = 0.0;
@@ -248,6 +278,8 @@ public class Graph extends AppCompatActivity {
 
         return puntos;
     }
+
+    @NonNull
     private static ArrayList<double[]> generarOndaDienteSierraFourier(double periodo, double armonico) {
         double tiempoInicial = 0.0;
         double tiempoFinal = 2 * periodo;
@@ -273,7 +305,7 @@ public class Graph extends AppCompatActivity {
     }
 
 
-
+    @NonNull
     private ArrayList<double[]> generarOndaCuadrada(double periodo) {
         double tiempoInicial = 0.0;
         double tiempoFinal = 2 * periodo; // Rango de tiempo para dos periodos
@@ -296,6 +328,32 @@ public class Graph extends AppCompatActivity {
 
         return puntos;
     }
+
+    private ArrayList<double[]> generarOndaCuadradaFourier(double periodo, double armonico) {
+        double tiempoInicial = 0.0;
+        double tiempoFinal = 2 * periodo;
+        int numPuntos = 1000;
+        double pasoTiempo = (tiempoFinal - tiempoInicial) / numPuntos;
+        ArrayList<double[]> puntos = new ArrayList<>();
+        double[] tiempo = new double[numPuntos + 1];
+        for (int i = 0; i <= numPuntos; i++) {
+            tiempo[i] = i * pasoTiempo;
+        }
+        double[] serieFourier = new double[numPuntos + 1];
+        for (int i = 0; i <= numPuntos; i++) {
+            double tiempoNormalizado = tiempo[i] % periodo;
+            for (int n = 1; n <= armonico; n++) {
+                serieFourier[i] += (4 / Math.PI) * (1.0 / (2 * n - 1)) * Math.sin(2 * Math.PI * (2 * n - 1) * tiempoNormalizado / periodo);
+            }
+        }
+
+        for (int i = 0; i <= numPuntos; i++) {
+            double[] puntoFourier = {tiempo[i], serieFourier[i]};
+            puntos.add(puntoFourier);
+        }
+        return puntos;
+    }
+
 
     private ArrayList<double[]> generarOndaRectangular(double periodo) {
         double tiempoInicial = 0.0;
@@ -320,7 +378,58 @@ public class Graph extends AppCompatActivity {
         return puntos;
     }
 
+    private ArrayList<double[]> generarOndaRectangularFourier(double periodo, double armonico) {
+        int numPuntos = 1000;
+        double pasoTiempo = (2 * periodo) / numPuntos;
 
+        ArrayList<double[]> puntos = new ArrayList<>();
+
+
+        double[] tiempo = new double[numPuntos + 1];
+        for (int i = 0; i <= numPuntos; i++) {
+            tiempo[i] = i * pasoTiempo;
+        }
+
+
+        double[] original_wave = new double[numPuntos];
+        for (int i = 0; i < numPuntos; i++) {
+            double x = i * pasoTiempo;
+            if (x % periodo <= periodo / 4) {
+                original_wave[i] = 1;
+            } else {
+                original_wave[i] = -1;
+            }
+        }
+
+
+        double[] fourier_series = new double[numPuntos];
+        double paso = (2 * periodo) / (numPuntos - 1);
+        for (int i = 0; i < numPuntos; i++) {
+            double x = i * paso;
+            double suma = 0;
+            for (int n = 1; n <= armonico; n++) {
+                double an = 0;
+                double bn = 0;
+                for (int k = 0; k < numPuntos; k++) {
+                    double t = k * paso;
+                    if (n % 2 != 0) {
+                        an += original_wave[k] * Math.cos((2 * Math.PI * n * t) / periodo) * paso;
+                    }
+                    bn += original_wave[k] * Math.sin((2 * Math.PI * n * t) / periodo) * paso;
+                }
+                suma += an * Math.cos((2 * Math.PI * n * x) / periodo) + bn * Math.sin((2 * Math.PI * n * x) / periodo);
+            }
+            fourier_series[i] = suma / armonico; // Normalización
+        }
+
+        // Agregar puntos de la serie de Fourier a la lista
+        for (int i = 0; i < numPuntos; i++) {
+            double[] puntoFourier = {tiempo[i], fourier_series[i]};
+            puntos.add(puntoFourier);
+        }
+
+        return puntos;
+    }
 
 
     private ArrayList<double[]> generarOndaTriangular(double periodo) {
@@ -348,6 +457,7 @@ public class Graph extends AppCompatActivity {
         }
         return puntos;
     }
+
     private ArrayList<double[]> generarOndaTriangularFourier(double periodo, double armonico) {
         double tiempoInicial = 0.0;
         double tiempoFinal = periodo;
@@ -359,28 +469,30 @@ public class Graph extends AppCompatActivity {
             tiempo[i] = i * pasoTiempo;
         }
         double[] serieFourier = new double[numPuntos + 1];
+        double omega0 = 2 * Math.PI / periodo; // Frecuencia angular fundamental
         for (int i = 0; i <= numPuntos; i++) {
             double tiempoNormalizado = tiempo[i] % periodo; // Normalizar el tiempo para un solo periodo
-            double valor = (2 * tiempoNormalizado / periodo); // Generar onda triangular
-            if (valor > 1) {
-                valor = 2 - valor; // Invertir la parte superior de la onda para hacerla triangular
+
+            // Cálculo de la serie de Fourier
+            double suma = 0;
+            for (int n = 1; n <= armonico; n += 2) { // Sumar solo armónicos impares
+                suma += (8 / (Math.PI * Math.PI)) * (1.0 / (n * n)) * Math.cos(n * omega0 * tiempoNormalizado);
             }
-            // Escalar la onda para que oscile entre -1 y 1
-            valor = valor * 2 - 1;
-            // Generar la serie de Fourier para la onda triangular
-            for (int n = 1; n <= armonico; n++) {
-                serieFourier[i] += (8 / (Math.PI * Math.PI)) * (1.0 / (n * n)) * Math.sin(2 * Math.PI * (2 * n - 1) * tiempoNormalizado / periodo);
-            }
+            serieFourier[i] = suma;
         }
+        // Normalizar la serie de Fourier para limitar la amplitud a [-1, 1]
+        double maxAmplitud = Math.max(Math.abs(serieFourier[0]), Math.abs(serieFourier[numPuntos]));
+        for (int i = 0; i <= numPuntos; i++) {
+            serieFourier[i] /= maxAmplitud;
+        }
+
         // Agregar puntos de la serie de Fourier a la lista
         for (int i = 0; i <= numPuntos; i++) {
-            double[] puntoFourier = {tiempo[i], serieFourier[i]};
+            double[] puntoFourier = {tiempo[i], serieFourier[i] * -1};
             puntos.add(puntoFourier);
         }
         return puntos;
     }
-
-
 
 
     private ArrayList<double[]> generarOndaTrenPulsos(double periodo) {
@@ -403,6 +515,59 @@ public class Graph extends AppCompatActivity {
             }
             double[] punto = {tiempo, valor};
             puntos.add(punto);
+        }
+
+        return puntos;
+    }
+
+    private ArrayList<double[]> generarOndaTrenPulsosFourier(double periodo, double armonico) {
+        int numPuntos = 1000;
+        double pasoTiempo = (2 * periodo) / numPuntos;
+
+        ArrayList<double[]> puntos = new ArrayList<>();
+
+
+        double[] tiempo = new double[numPuntos + 1];
+        for (int i = 0; i <= numPuntos; i++) {
+            tiempo[i] = i * pasoTiempo;
+        }
+
+
+        double[] original_wave = new double[numPuntos];
+        for (int i = 0; i < numPuntos; i++) {
+            double x = i * pasoTiempo;
+            if (x % periodo <= periodo / 2) {
+                original_wave[i] = 1;
+            } else {
+                original_wave[i] = 0;
+            }
+        }
+
+
+        double[] fourier_series = new double[numPuntos];
+        double paso = (2 * periodo) / (numPuntos - 1);
+        for (int i = 0; i < numPuntos; i++) {
+            double x = i * paso;
+            double suma = 0;
+            for (int n = 1; n <= armonico; n++) {
+                double an = 0;
+                double bn = 0;
+                for (int k = 0; k < numPuntos; k++) {
+                    double t = k * paso;
+                    if (n % 2 != 0) {
+                        an += original_wave[k] * Math.cos((2 * Math.PI * n * t) / periodo) * paso;
+                    }
+                    bn += original_wave[k] * Math.sin((2 * Math.PI * n * t) / periodo) * paso;
+                }
+                suma += an * Math.cos((2 * Math.PI * n * x) / periodo) + bn * Math.sin((2 * Math.PI * n * x) / periodo);
+            }
+            fourier_series[i] = suma / armonico; // Normalización
+        }
+
+        // Agregar puntos de la serie de Fourier a la lista
+        for (int i = 0; i < numPuntos; i++) {
+            double[] puntoFourier = {tiempo[i], fourier_series[i] + 0.5};
+            puntos.add(puntoFourier);
         }
 
         return puntos;
