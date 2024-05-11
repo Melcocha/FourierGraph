@@ -3,6 +3,7 @@ package com.example.fouriergraph;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
+
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -15,7 +16,6 @@ import android.widget.ArrayAdapter;
 
 import android.widget.Button;
 import android.widget.EditText;
-
 
 
 public class MainActivity extends AppCompatActivity {
@@ -67,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
 
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {

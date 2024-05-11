@@ -32,6 +32,17 @@
 
     </androidx.appcompat.widget.Toolbar>
 
+
+    <ImageView
+        android:id="@+id/graph_view"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintVertical_bias="0.0" />
+
+
     <Button
         android:id="@+id/button"
         android:layout_width="wrap_content"
