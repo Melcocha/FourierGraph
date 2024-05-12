@@ -3,10 +3,18 @@ package com.example.fouriergraph;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-
-import java.lang.Math;
+import android.graphics.Bitmap;
+import android.widget.ImageView;
+import com.example.fouriergraph.GraphView;
 import java.util.ArrayList;
+import java.lang.Math;
+import android.view.ViewGroup;
 
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.view.View;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,6 +30,8 @@ public class Graph extends AppCompatActivity {
     private static final String TAG = "Graph";
 
     @Override
+
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
@@ -65,14 +75,14 @@ public class Graph extends AppCompatActivity {
                     case "Onda coseno":
                         ArrayList<double[]> puntosCos = generarOndaCosenoidalRectificada(ondaDouble);
                         ArrayList<double[]> puntosCosTransformada = generarOndaCosenoFourier(ondaDouble, armonicoDouble);
-
+                        Graficar(puntosCos, puntosCosTransformada);
 
                         break;
 
                     case "Onda cuadrada":
                         ArrayList<double[]> puntosCuadrado = generarOndaCuadrada(ondaDouble);
                         ArrayList<double[]> puntosCuadradoFourier = generarOndaCuadradaFourier(ondaDouble, armonicoDouble);
-
+                        Graficar(puntosCuadrado, puntosCuadradoFourier);
 
                         break;
 
@@ -130,7 +140,7 @@ public class Graph extends AppCompatActivity {
         ArrayList<double[]> puntos = new ArrayList<>();
 
         for (double tiempo = tiempoInicial; tiempo <= 2 * tiempoFinal; tiempo += pasoTiempo) {
-            double valor = Math.abs(Math.sin((2 * Math.PI * tiempo) / periodo)); // Tomar el valor absoluto
+            double valor = Math.abs(Math.sin((2 * Math.PI * tiempo) / periodo));
             double[] punto = {tiempo, valor};
             puntos.add(punto);
         }
@@ -153,9 +163,9 @@ public class Graph extends AppCompatActivity {
         for (int i = 0; i < numPuntos; i++) {
             double x = i * pasoTiempo;
             if (x % periodo <= periodo / 2) {
-                original_wave[i] = Math.sin((2 * Math.PI * x) / periodo); // Seno rectificado
+                original_wave[i] = Math.sin((2 * Math.PI * x) / periodo);
             } else {
-                original_wave[i] = 0; // Valor cero para la segunda mitad del periodo
+                original_wave[i] = 0;
             }
         }
 
@@ -176,10 +186,10 @@ public class Graph extends AppCompatActivity {
                 }
                 suma += an * Math.cos((2 * Math.PI * n * x) / periodo) + bn * Math.sin((2 * Math.PI * n * x) / periodo);
             }
-            fourier_series[i] = suma / armonico; // Normalización
+            fourier_series[i] = suma / armonico;
         }
 
-        // Agregar puntos de la serie de Fourier a la lista
+
         for (int i = 0; i < numPuntos; i++) {
             double[] puntoFourier = {tiempo[i], fourier_series[i]*2};
             puntos.add(puntoFourier);
@@ -201,7 +211,7 @@ public class Graph extends AppCompatActivity {
         ArrayList<double[]> puntos = new ArrayList<>();
 
         for (double tiempo = tiempoInicial; tiempo <= 2 * tiempoFinal; tiempo += pasoTiempo) {
-            double valor = Math.abs(Math.cos((2 * Math.PI * tiempo) / periodo)); // Tomar el valor absoluto
+            double valor = Math.abs(Math.cos((2 * Math.PI * tiempo) / periodo));
             double[] punto = {tiempo, valor};
             puntos.add(punto);
         }
@@ -224,9 +234,9 @@ public class Graph extends AppCompatActivity {
         for (int i = 0; i < numPuntos; i++) {
             double x = i * pasoTiempo;
             if (x % periodo <= periodo / 2) {
-                original_wave[i] = Math.cos((2 * Math.PI * x) / periodo); // Seno rectificado
+                original_wave[i] = Math.cos((2 * Math.PI * x) / periodo);
             } else {
-                original_wave[i] = 0; // Valor cero para la segunda mitad del periodo
+                original_wave[i] = 0;
             }
         }
 
@@ -247,10 +257,10 @@ public class Graph extends AppCompatActivity {
                 }
                 suma += an * Math.cos((2 * Math.PI * n * x) / periodo) + bn * Math.sin((2 * Math.PI * n * x) / periodo);
             }
-            fourier_series[i] = suma / armonico; // Normalización
+            fourier_series[i] = suma / armonico;
         }
 
-        // Agregar puntos de la serie de Fourier a la lista
+
         for (int i = 0; i < numPuntos; i++) {
             double[] puntoFourier = {tiempo[i], fourier_series[i]*2};
             puntos.add(puntoFourier);
@@ -270,7 +280,7 @@ public class Graph extends AppCompatActivity {
         for (double tiempo = tiempoInicial; tiempo <= tiempoFinal; tiempo += pasoTiempo) {
             double tiempoNormalizado = tiempo % periodo;
             double valor = (2 * tiempoNormalizado / periodo) - 1;
-            // Ajusta el valor al rango [0, 1]
+
             valor = (valor + 1) / 2;
             double[] punto = {tiempo, valor};
             puntos.add(punto);
@@ -290,11 +300,11 @@ public class Graph extends AppCompatActivity {
         for (double tiempo = tiempoInicial; tiempo <= tiempoFinal; tiempo += pasoTiempo) {
             double valor = 0.0;
             double tiempoNormalizado = tiempo % periodo;
-            // Calcular la serie de Fourier
+
             for (int n = 1; n <= armonico; n++) {
                 valor += (2.0 / Math.PI) * (1.0 / n) * Math.sin(2.0 * Math.PI * n * tiempoNormalizado / periodo);
             }
-            // Ajustar el valor al rango [0, 1]
+
             valor = (valor + 1) / 2;
             valor = -valor + 1;
             double[] punto = {tiempo, valor};
@@ -308,7 +318,7 @@ public class Graph extends AppCompatActivity {
     @NonNull
     private ArrayList<double[]> generarOndaCuadrada(double periodo) {
         double tiempoInicial = 0.0;
-        double tiempoFinal = 2 * periodo; // Rango de tiempo para dos periodos
+        double tiempoFinal = 2 * periodo;
         int numPuntos = 1000;
         double pasoTiempo = (tiempoFinal - tiempoInicial) / numPuntos;
 
@@ -316,7 +326,7 @@ public class Graph extends AppCompatActivity {
 
         for (double tiempo = tiempoInicial; tiempo <= tiempoFinal; tiempo += pasoTiempo) {
             double valor;
-            double tiempoNormalizado = tiempo % periodo; // Normalizar el tiempo para un solo periodo
+            double tiempoNormalizado = tiempo % periodo;
             if (tiempoNormalizado < periodo / 2) {
                 valor = 1.0;
             } else {
@@ -419,10 +429,10 @@ public class Graph extends AppCompatActivity {
                 }
                 suma += an * Math.cos((2 * Math.PI * n * x) / periodo) + bn * Math.sin((2 * Math.PI * n * x) / periodo);
             }
-            fourier_series[i] = suma / armonico; // Normalización
+            fourier_series[i] = suma / armonico;
         }
 
-        // Agregar puntos de la serie de Fourier a la lista
+
         for (int i = 0; i < numPuntos; i++) {
             double[] puntoFourier = {tiempo[i], fourier_series[i]};
             puntos.add(puntoFourier);
@@ -433,25 +443,25 @@ public class Graph extends AppCompatActivity {
 
 
     private ArrayList<double[]> generarOndaTriangular(double periodo) {
-        // Definir el rango de tiempo para la onda (por ejemplo, de 0 a 2π)
+
         double tiempoInicial = 0.0;
         double tiempoFinal = periodo;
 
-        // Número de puntos para generar en la onda
+
         int numPuntos = 1000;
 
-        // Calcular el paso de tiempo entre cada punto
+
         double pasoTiempo = (2 * tiempoFinal - tiempoInicial) / numPuntos;
 
         // Generar la onda triangular
         ArrayList<double[]> puntos = new ArrayList<>();
         for (double tiempo = tiempoInicial; tiempo <= 2 * tiempoFinal; tiempo += pasoTiempo) {
-            double tiempoNormalizado = tiempo % periodo; // Normalizar el tiempo para un solo periodo
-            double valor = (2 * tiempoNormalizado / periodo); // Generar onda triangular
+            double tiempoNormalizado = tiempo % periodo;
+            double valor = (2 * tiempoNormalizado / periodo);
             if (valor > 1) {
-                valor = 2 - valor; // Invertir la parte superior de la onda para hacerla triangular
+                valor = 2 - valor;
             }
-            valor = valor * 2 - 1; // Escalar la onda para que oscile entre -1 y 1
+            valor = valor * 2 - 1;
             double[] punto = {tiempo, valor};
             puntos.add(punto);
         }
@@ -469,24 +479,23 @@ public class Graph extends AppCompatActivity {
             tiempo[i] = i * pasoTiempo;
         }
         double[] serieFourier = new double[numPuntos + 1];
-        double omega0 = 2 * Math.PI / periodo; // Frecuencia angular fundamental
+        double omega0 = 2 * Math.PI / periodo;
         for (int i = 0; i <= numPuntos; i++) {
-            double tiempoNormalizado = tiempo[i] % periodo; // Normalizar el tiempo para un solo periodo
+            double tiempoNormalizado = tiempo[i] % periodo;
 
-            // Cálculo de la serie de Fourier
             double suma = 0;
-            for (int n = 1; n <= armonico; n += 2) { // Sumar solo armónicos impares
+            for (int n = 1; n <= armonico; n += 2) {
                 suma += (8 / (Math.PI * Math.PI)) * (1.0 / (n * n)) * Math.cos(n * omega0 * tiempoNormalizado);
             }
             serieFourier[i] = suma;
         }
-        // Normalizar la serie de Fourier para limitar la amplitud a [-1, 1]
+
         double maxAmplitud = Math.max(Math.abs(serieFourier[0]), Math.abs(serieFourier[numPuntos]));
         for (int i = 0; i <= numPuntos; i++) {
             serieFourier[i] /= maxAmplitud;
         }
 
-        // Agregar puntos de la serie de Fourier a la lista
+
         for (int i = 0; i <= numPuntos; i++) {
             double[] puntoFourier = {tiempo[i], serieFourier[i] * -1};
             puntos.add(puntoFourier);
@@ -561,10 +570,10 @@ public class Graph extends AppCompatActivity {
                 }
                 suma += an * Math.cos((2 * Math.PI * n * x) / periodo) + bn * Math.sin((2 * Math.PI * n * x) / periodo);
             }
-            fourier_series[i] = suma / armonico; // Normalización
+            fourier_series[i] = suma / armonico;
         }
 
-        // Agregar puntos de la serie de Fourier a la lista
+
         for (int i = 0; i < numPuntos; i++) {
             double[] puntoFourier = {tiempo[i], fourier_series[i] + 0.5};
             puntos.add(puntoFourier);
@@ -573,5 +582,88 @@ public class Graph extends AppCompatActivity {
         return puntos;
     }
 
+    public void Graficar(ArrayList<double[]> GraficaOriginal, ArrayList<double[]> GraficaFourier) {
+
+        Paint paint = new Paint();
+        paint.setColor(Color.RED);
+        paint.setStrokeWidth(5);
+
+
+        ImageView imageView = findViewById(R.id.imageView);
+
+
+        if (imageView != null) {
+
+            int imageViewWidth = 383;
+            int imageViewHeight = 518;
+
+
+            Log.d("PRUEBA", "Ancho del ImageView: " + imageViewWidth);
+            Log.d("PRUEBA", "Alto del ImageView: " + imageViewHeight);
+
+
+            Log.d("PRUEBA", "Estableciendo dimensiones al ImageView");
+            ViewGroup.LayoutParams layoutParams = imageView.getLayoutParams();
+            layoutParams.width = imageViewWidth;
+            layoutParams.height = imageViewHeight;
+            imageView.setLayoutParams(layoutParams);
+
+
+            if (imageViewWidth > 0 && imageViewHeight > 0) {
+                // Crear un nuevo Bitmap con las dimensiones del ImageView para dibujar la gráfica
+                Log.d("PRUEBA", "Creando Bitmap con dimensiones del ImageView");
+                Bitmap bitmap = Bitmap.createBitmap(imageViewWidth, imageViewHeight, Bitmap.Config.ARGB_8888);
+                bitmap.setDensity(getResources().getDisplayMetrics().densityDpi);
+
+                Canvas canvas = new Canvas(bitmap);
+
+
+                Log.d("PRUEBA", "Dibujando gráfica original");
+                for (int i = 0; i < GraficaOriginal.size() - 1; i++) {
+                    double[] puntoInicio = GraficaOriginal.get(i);
+                    double[] puntoFin = GraficaOriginal.get(i + 1);
+                    Log.d("PRUEBA", "Dibujando línea de (" + puntoInicio[0] + ", " + puntoInicio[1] + ") a (" + puntoFin[0] + ", " + puntoFin[1] + ")");
+                    canvas.drawLine((float) puntoInicio[0], (float) puntoInicio[1], (float) puntoFin[0], (float) puntoFin[1], paint);
+                }
+
+
+                paint.setColor(Color.BLUE);
+
+
+                Log.d("PRUEBA", "Dibujando gráfica de Fourier");
+                for (int i = 0; i < GraficaFourier.size() - 1; i++) {
+                    double[] puntoInicio = GraficaFourier.get(i);
+                    double[] puntoFin = GraficaFourier.get(i + 1);
+                    Log.d("PRUEBA", "Dibujando línea de (" + puntoInicio[0] + ", " + puntoInicio[1] + ") a (" + puntoFin[0] + ", " + puntoFin[1] + ")");
+                    canvas.drawLine((float) puntoInicio[0], (float) puntoInicio[1], (float) puntoFin[0], (float) puntoFin[1], paint);
+                }
+
+
+                Log.d("PRUEBA", "Asignando Bitmap al ImageView");
+                imageView.setImageBitmap(bitmap);
+            } else {
+                Log.e("PRUEBA", "Ancho o alto del ImageView no válido.");
+            }
+        } else {
+            Log.e("PRUEBA", "ImageView es nulo. No se puede establecer la imagen.");
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
+
+
+
