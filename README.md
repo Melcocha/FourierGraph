@@ -6,5 +6,7 @@ Autores ✒️
 
 
 Oscar Alexander Bonilla Sorto - 03T
+
 Melvin Alexander Rodríguez Arteaga - 03T
-Daniel Rodríguez Santacruz
+
+Daniel Rodríguez Santacruz - 03T
